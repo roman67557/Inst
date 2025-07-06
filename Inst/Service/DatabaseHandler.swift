@@ -32,7 +32,14 @@ final class DatabaseHandler {
     
     let newImage = NSManagedObject(entity: photoEntity, insertInto: context)
     
-    newImage.setValue(imgData, forKey: "img")
+    let fileManager = FileManager.default
+    let tempDirectoryURL = fileManager.temporaryDirectory
+    let uniqueFileName = UUID().uuidString
+    let fileURL = tempDirectoryURL.appendingPathComponent(uniqueFileName)
+    
+    try? imgData?.write(to: fileURL)
+    
+    newImage.setValue(fileURL, forKey: "url")
     newImage.setValue(date, forKey: "date")
     
     self.saveContext()

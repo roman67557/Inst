@@ -8,18 +8,13 @@
 import UIKit
 import CoreData
 
-protocol Animation: AnyObject {
-
-}
+protocol Animation: AnyObject {}
 
 final class UserViewController: UIViewController, Animation {
+  // Presenter
+  var presenter: UserViewPresenterProtocol!
   
-  //MARK: - Public Properties
-  
-  public var presenter: UserViewPresenterProtocol!
-  
-  //MARK: - Private Properties
-  
+  // Private
   private let fetchedResultController = DatabaseHandler.shared.fetchedResultsController(entityName: "ShooterdImages", keyForSort: "date")
   private var operations = [BlockOperation]()
   private let myPhotoImageView = UIImageView()
@@ -88,7 +83,6 @@ final class UserViewController: UIViewController, Animation {
   }
   
   private func createProfileImageView() {
-    
     guard let image = UIImage(named: "me") else { return }
     
     //        guard let data = myPhoto.img else { return }
@@ -123,7 +117,6 @@ final class UserViewController: UIViewController, Animation {
 //MARK: - Extensions
 
 extension UserViewController: UICollectionViewDelegate, UICollectionViewDataSource {
-  
   func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
     guard let sections = fetchedResultController.sections else { return 0 }
     return sections[section].numberOfObjects
@@ -152,7 +145,6 @@ extension UserViewController: UICollectionViewDelegate, UICollectionViewDataSour
 }
 
 extension UserViewController: UserViewProtocol {
-  
   @objc func moveToProfilePhoto(_ sender: Any) {
     presenter?.moveToProfilePhoto(view: self)
   }
@@ -164,7 +156,6 @@ extension UserViewController: UserViewProtocol {
 }
 
 extension UserViewController: UINavigationControllerDelegate {
-  
   func navigationController(_ navigationController: UINavigationController, animationControllerFor operation: UINavigationController.Operation, from fromVC: UIViewController, to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
     
     switch operation {
@@ -194,7 +185,6 @@ extension UserViewController: UINavigationControllerDelegate {
 }
 
 extension UserViewController: NSFetchedResultsControllerDelegate {
-  
   func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
     operations = []
   }
@@ -242,9 +232,4 @@ extension UserViewController: NSFetchedResultsControllerDelegate {
       }
     }
   }
-  
 }
-
-
-
-
