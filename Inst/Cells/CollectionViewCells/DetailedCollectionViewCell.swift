@@ -60,7 +60,6 @@ class DetailedCollectionViewCell: UICollectionViewCell, UIScrollViewDelegate {
   }
   
   private func setupScroll() {
-    
     scrollImg.delegate = self
     scrollImg.alwaysBounceVertical = false
     scrollImg.alwaysBounceHorizontal = false
@@ -98,11 +97,19 @@ class DetailedCollectionViewCell: UICollectionViewCell, UIScrollViewDelegate {
   }
   
   private func setupImageView(shootedImage: ShooterdImages) {
-    
-    guard let data = shootedImage.img, let image = UIImage(data: data) else { return }
-    
-    imgView.image = image
-    imgView.contentMode = .scaleAspectFit
+    guard
+        let string = shootedImage.fileUrl,
+        let url = URL(string: string)
+      else { return }
+      activityIndicatorView.startAnimating()
+
+      getData(from: url) { [weak self] data, _, _ in
+          self?.activityIndicatorView.stopAnimating()
+
+          let image = UIImage(data: data ?? Data())
+          self?.imgView.image = image
+          self?.imgView.contentMode = .scaleAspectFit
+      }
   }
   
   @objc private func handleDoubleTapScrollView(recognizer: UITapGestureRecognizer) {
@@ -148,4 +155,7 @@ class DetailedCollectionViewCell: UICollectionViewCell, UIScrollViewDelegate {
     scrollImg.setZoomScale(1, animated: true)
   }
   
+  func getData(from url: URL, completion: @escaping (Data?, URLResponse?, Error?) -> ()) {
+      URLSession.shared.dataTask(with: url, completionHandler: completion).resume()
+  }
 }

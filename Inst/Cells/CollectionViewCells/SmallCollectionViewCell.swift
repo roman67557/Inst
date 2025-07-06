@@ -8,21 +8,18 @@
 import UIKit
 
 class SmallCollectionViewCell: UICollectionViewCell {
-  
-  //MARK: - Public Properties
-  
+  // Internal
   static let identifier = "SmallCollectionViewCell"
-  public let searchPageImageView = UIImageView()
+  let searchPageImageView = UIImageView()
   
-  //MARK: - Private Properties
-  
+  // Private
   private let activityIndicatorView = UIActivityIndicatorView()
   private var loadImageTask: Task<Void, Never>?
   private var presenter: SearchViewPresenterProtocol?
   
-  //MARK: - Public Methods
+  //MARK: - Configuration
   
-  public func configure<T>(with photo: T, and presenter: SearchViewPresenterProtocol?) {
+  func configure<T>(with photo: T, and presenter: SearchViewPresenterProtocol?) {
     self.presenter = presenter
     
     addSubViews()
@@ -67,7 +64,7 @@ class SmallCollectionViewCell: UICollectionViewCell {
         self?.searchPageImageView.contentMode = .scaleAspectFill
         self?.searchPageImageView.clipsToBounds = true
       } catch {
-        presenter?.openAlert(error: error.localizedDescription)
+        self?.presenter?.openAlert(error: error.localizedDescription)
         if Task.isCancelled { return }
         self?.searchPageImageView.image = nil
       }
@@ -77,12 +74,15 @@ class SmallCollectionViewCell: UICollectionViewCell {
   }
   
   private func setupImageView(shootedImage: ShooterdImages) {
-    guard let data = shootedImage.img else { return }
-    let image = UIImage(data: data)
-    
-    searchPageImageView.image = image
-    searchPageImageView.clipsToBounds = true
-    searchPageImageView.contentMode = .scaleAspectFill
+    guard let string = shootedImage.fileUrl, let url = URL(string: string) else { return }
+    activityIndicatorView.startAnimating()
+
+    getData(from: url) { [weak self] data, _, _ in
+        self?.activityIndicatorView.stopAnimating()
+        self?.searchPageImageView.image = UIImage(data: data ?? Data())
+        self?.searchPageImageView.clipsToBounds = true
+        self?.searchPageImageView.contentMode = .scaleAspectFill
+    }
   }
   
   private func setupConstraints() {
@@ -99,6 +99,8 @@ class SmallCollectionViewCell: UICollectionViewCell {
     super.prepareForReuse()
     searchPageImageView.image = nil
   }
-  
-}
 
+  func getData(from url: URL, completion: @escaping (Data?, URLResponse?, Error?) -> ()) {
+        URLSession.shared.dataTask(with: url, completionHandler: completion).resume()
+  }
+}

@@ -6,15 +6,4 @@ target 'Inst' do
   use_frameworks!
 
   # Pods for Inst
-pod 'FontAwesome.swift'
-
-  target 'InstTests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
-
-  target 'InstUITests' do
-    # Pods for testing
-  end
-
 end

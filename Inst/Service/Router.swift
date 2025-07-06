@@ -7,7 +7,6 @@
 
 import Foundation
 import UIKit
-import FontAwesome_swift
 
 protocol RouterMain {
   var tabBarController: UITabBarController { get set }
@@ -41,10 +40,12 @@ final class Router: RouterProtocol {
     tabBarController.setViewControllers([mainView, searchView, updatesView, userView], animated: true)
     tabBarController.tabBar.isHidden = false
     
-    let imagesArray = [UIImage.fontAwesomeIcon(name: .houseUser, style: .solid, textColor: .black, size: CGSize(width: 30, height: 30)),
-                       UIImage.fontAwesomeIcon(name: .search, style: .solid, textColor: .black, size: CGSize(width: 30, height: 30)),
-                       UIImage.fontAwesomeIcon(name: .heart, style: .solid, textColor: .black, size: CGSize(width: 30, height: 30)),
-                       UIImage.fontAwesomeIcon(name: .user, style: .solid, textColor: .black, size: CGSize(width: 30, height: 30))]
+    let imagesArray = [
+        UIImage(systemName: "house"),
+        UIImage(systemName: "magnifyingglass"),
+        UIImage(systemName: "heart"),
+        UIImage(systemName: "person")
+    ]
     
     let viewControllers = [0: mainView, 1: searchView, 2: updatesView, 3: userView]
     for (index, VC) in (viewControllers) {
